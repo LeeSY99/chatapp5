@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/chatting_box"
+        android:background="@color/skyblue"
+        />
+
+    <LinearLayout
+        android:id="@+id/chatting_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp"
+        android:weightSum="100">
+        <EditText
+            android:id="@+id/input_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="90"
+            android:background="@drawable/chatbox_round"
+            android:layout_marginTop="5dp"
+            android:paddingStart="20dp"
+            android:layout_marginLeft="10dp"
+            tools:ignore="SpeakableTextPresentCheck"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/send_button"
+            android:layout_weight="10"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="전송"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+</RelativeLayout>

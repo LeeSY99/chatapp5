@@ -1,8 +1,12 @@
 package com.example.chatapp5
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp5.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -46,18 +50,38 @@ class MainActivity : AppCompatActivity() {
                     //user info
                     val cUser=postSnapshot.getValue(User::class.java)
                     //본인을 제외한 user 표시
-                    if(auth.currentUser?.email != cUser?.email){
-                        Log.d("UID", "Current User UID: ${auth.currentUser?.email}, cUser UID: ${cUser?.email}")
+                    if(auth.currentUser?.uid != cUser?.uid){
+                        Log.d("UID", "Current User UID: ${auth.currentUser?.uid}, cUser UID: ${cUser?.uid}")
                         userList.add(cUser!!)
                     }
                 }
                 adapter.notifyDataSetChanged()//화면에 적용
             }
 
-            override fun onCancelled(error: DatabaseError) {//오류 발생시
+            override fun onCancelled(error: DatabaseError) {
+            //오류 발생시
+            }
+        })
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.chatmenu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.log_out -> {
+                auth.signOut()
+                val intent= Intent(this@MainActivity,LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+                true
             }
 
-        })
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

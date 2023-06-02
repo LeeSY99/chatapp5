@@ -1,6 +1,7 @@
 package com.example.chatapp5
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,17 @@ RecyclerView.Adapter<UserAdapter.UserViewHolder>(){
     override fun onBindViewHolder(holder:UserViewHolder, position: Int) {
         val currentUser = userList[position]
         holder.nameText.text = currentUser.name
+
+        //사용자 클릭시
+        holder.itemView.setOnClickListener{
+            val intent= Intent(context,ChatActivity::class.java)
+
+            //데이터 넘ㅁ김
+            intent.putExtra("name",currentUser.name)
+            intent.putExtra("uid",currentUser.uid)
+
+            context.startActivity(intent)
+        }
     }
     //리스트 개수
     override fun getItemCount(): Int {
