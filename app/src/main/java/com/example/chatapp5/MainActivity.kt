@@ -2,6 +2,7 @@ package com.example.chatapp5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp5.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -43,10 +44,11 @@ class MainActivity : AppCompatActivity() {
                 userList.clear()
                 for(postSnapshot in snapshot.children){
                     //user info
-                    val currentUser=postSnapshot.getValue(User::class.java)
+                    val cUser=postSnapshot.getValue(User::class.java)
                     //본인을 제외한 user 표시
-                    if(auth.currentUser?.uid != currentUser?.uId){
-                        userList.add(currentUser!!)
+                    if(auth.currentUser?.email != cUser?.email){
+                        Log.d("UID", "Current User UID: ${auth.currentUser?.email}, cUser UID: ${cUser?.email}")
+                        userList.add(cUser!!)
                     }
                 }
                 adapter.notifyDataSetChanged()//화면에 적용
