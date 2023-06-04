@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         binding.userRecycleView.layoutManager=LinearLayoutManager(this)
         binding.userRecycleView.adapter=adapter
 
+
         //사용자 불러오기
         database.child("user").addValueEventListener(object:ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {// 데이터 변경시
@@ -65,23 +66,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.chatmenu, menu)
-        return true
+        menuInflater.inflate(R.menu.menu,menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
-        return when (item.itemId) {
-            R.id.log_out -> {
-                auth.signOut()
-                val intent= Intent(this@MainActivity,LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
+        if(item.itemId == R.id.log_out){
+            auth.signOut()
+            val intent = Intent(this@MainActivity,LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+            return true
         }
+        return true
     }
 }

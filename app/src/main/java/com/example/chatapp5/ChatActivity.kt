@@ -52,7 +52,7 @@ class ChatActivity : AppCompatActivity() {
         receiverRoom=senderUid+receiverUid
         senderRoom=receiverUid+senderUid
         //대화상대 표시
-        supportActionBar?.title=receiverName
+        binding.member.text=receiverName
 
         //전송 버튼 클릭 시
         binding.sendButton.setOnClickListener {

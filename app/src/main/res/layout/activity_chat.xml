@@ -5,12 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
+    <LinearLayout
+        android:id="@+id/state"
+        android:background="@color/skyblue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        >
+        <TextView
+            android:id="@+id/member"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:textSize="30sp"
+            android:paddingTop="5dp"
+            android:textAlignment="center"
+            android:layout_above="@id/chat_recyclerview"/>
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/state"
         android:layout_above="@id/chatting_box"
         android:background="@color/skyblue"
         />
