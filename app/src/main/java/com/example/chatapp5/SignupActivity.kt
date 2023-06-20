@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.example.chatapp5.databinding.ActivityLoginBinding
 import com.example.chatapp5.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database

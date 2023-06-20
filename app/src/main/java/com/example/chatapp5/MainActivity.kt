@@ -11,74 +11,112 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp5.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
+object FirebaseManager {
+    private var auth: FirebaseAuth? = null
+    private var database: DatabaseReference? = null
+
+    fun initialize() {
+        auth = Firebase.auth
+        database = Firebase.database.reference
+    }
+
+    fun getAuth(): FirebaseAuth {
+        return auth ?: throw IllegalStateException("FirebaseManager is not initialized.")
+    }
+
+    fun getDatabase(): DatabaseReference {
+        return database ?: throw IllegalStateException("FirebaseManager is not initialized.")
+    }
+}
+
 class MainActivity : AppCompatActivity() {
-    // 객체생성
-    lateinit var binding:ActivityMainBinding
-    lateinit var adapter:UserAdapter
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: UserAdapter
+    private lateinit var userList: ArrayList<User>
 
-    private lateinit var auth:FirebaseAuth
-    private lateinit var database:DatabaseReference
-    //user list
-    private lateinit var userList:ArrayList<User>
+    private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding= ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private fun initializeFirebase() {
+        FirebaseManager.initialize()
+        auth = FirebaseManager.getAuth()
+        database = FirebaseManager.getDatabase()
+    }
 
-        auth=Firebase.auth
-        database= Firebase.database.reference
-        userList=ArrayList()
+    private fun setupRecyclerView() {
+        userList = ArrayList()
+        adapter = UserAdapter(this, userList)
+        binding.userRecycleView.layoutManager = LinearLayoutManager(this)
+        binding.userRecycleView.adapter = adapter
+    }
 
-        adapter= UserAdapter(this,userList)
+    private fun loadUsersFromDatabase() {
+        val currentUserUid = auth.currentUser?.uid
 
-        binding.userRecycleView.layoutManager=LinearLayoutManager(this)
-        binding.userRecycleView.adapter=adapter
-
-
-        //사용자 불러오기
-        database.child("user").addValueEventListener(object:ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {// 데이터 변경시
+        database.child("user").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 userList.clear()
-                for(postSnapshot in snapshot.children){
-                    //user info
-                    val cUser=postSnapshot.getValue(User::class.java)
-                    //본인을 제외한 user 표시
-                    if(auth.currentUser?.uid != cUser?.uid){
-                        Log.d("UID", "Current User UID: ${auth.currentUser?.uid}, cUser UID: ${cUser?.uid}")
+                for (postSnapshot in snapshot.children) {
+                    val cUser = postSnapshot.getValue(User::class.java)
+                    if (currentUserUid != cUser?.uid) {
+                        Log.d(
+                            "UID",
+                            "Current User UID: $currentUserUid, cUser UID: ${cUser?.uid}"
+                        )
                         userList.add(cUser!!)
                     }
                 }
-                adapter.notifyDataSetChanged()//화면에 적용
+                adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-            //오류 발생시
+                // 오류 발생시
             }
         })
     }
 
+    private fun logout() {
+        val auth = FirebaseManager.getAuth()
+        auth.signOut()
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun setupOptionsMenu(menu: Menu?) {
+        menuInflater.inflate(R.menu.menu, menu)
+    }
+
+    private fun handleOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.log_out -> {
+                logout()
+                true
+            }
+            else -> true
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        initializeFirebase()
+        setupRecyclerView()
+        loadUsersFromDatabase()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu,menu)
+        setupOptionsMenu(menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        if(item.itemId == R.id.log_out){
-            auth.signOut()
-            val intent = Intent(this@MainActivity,LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-            return true
-        }
-        return true
+        return handleOptionsItemSelected(item)
     }
 }
